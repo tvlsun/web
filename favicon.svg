@@ -1,6 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-<defs><linearGradient id="g" x1="5" y1="5" x2="59" y2="59"><stop stop-color="#a9b5ff"/><stop offset=".55" stop-color="#b99cff"/><stop offset="1" stop-color="#73e2d8"/></linearGradient></defs>
-<rect width="64" height="64" rx="19" fill="#0b1020"/>
-<rect x="2" y="2" width="60" height="60" rx="18" fill="url(#g)" fill-opacity=".12" stroke="url(#g)" stroke-width="1.5"/>
-<path d="M13 20h23M24.5 20v26M36 20l7 26 8-26" fill="none" stroke="url(#g)" stroke-width="4.3" stroke-linecap="round" stroke-linejoin="round"/>
+<defs><linearGradient id="g" x1="7" y1="6" x2="57" y2="59"><stop stop-color="#f4e5b2"/><stop offset=".38" stop-color="#b8a4ff"/><stop offset=".72" stop-color="#8c9dff"/><stop offset="1" stop-color="#73e2d8"/></linearGradient><radialGradient id="c"><stop stop-color="#202b50"/><stop offset="1" stop-color="#0a1020"/></radialGradient></defs>
+<rect width="64" height="64" rx="19" fill="#080d19"/>
+<circle cx="32" cy="32" r="28" fill="none" stroke="url(#g)" stroke-width="1.4" opacity=".55"/>
+<path d="M32 2.5v7M32 54.5v7M2.5 32h7M54.5 32h7M11.15 11.15l5 5M47.85 47.85l5 5M52.85 11.15l-5 5M16.15 47.85l-5 5" stroke="url(#g)" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="32" cy="32" r="21" fill="url(#c)" stroke="url(#g)" stroke-width="1.7"/>
+<path d="M42.5 21H27.8c-4 0-6.3 2.1-6.3 5.2 0 3.3 2.5 4.8 6.2 5.7l8.4 2.1c3.4.9 5.3 2.1 5.3 4.8 0 3.3-2.6 5.2-6.6 5.2H21.5" fill="none" stroke="url(#g)" stroke-width="3.5" stroke-linecap="round"/>
 </svg>
