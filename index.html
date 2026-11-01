@@ -33,10 +33,14 @@
     <!-- Navigation -->
     <nav class="navbar" aria-label="Main navigation">
         <div class="nav-container">
-            <div class="logo">
-                <span class="logo-text">WEB3</span>
-                <span class="logo-accent">GAMER</span>
-            </div>
+            <a class="logo" href="#home" aria-label="TVLSUN home">
+                <svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="TV monogram">
+                    <defs><linearGradient id="brandGradient" x1="4" y1="4" x2="44" y2="44"><stop stop-color="#a9b5ff"/><stop offset=".55" stop-color="#b99cff"/><stop offset="1" stop-color="#73e2d8"/></linearGradient></defs>
+                    <rect x="2" y="2" width="44" height="44" rx="14" fill="url(#brandGradient)" fill-opacity=".13" stroke="url(#brandGradient)" stroke-opacity=".7"/>
+                    <path d="M10 15h18M19 15v19M28 15l6 19 6-19" fill="none" stroke="url(#brandGradient)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="logo-word">TVLSUN<span class="logo-period">.</span><small>WEB3 EXPLORER</small></span>
+            </a>
             <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-navigation"><span></span><span></span><span></span></button>
             <ul class="nav-links" id="primary-navigation">
                 <li><a href="#home">Home</a></li>
