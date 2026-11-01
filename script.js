@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // Lightweight interactive chess movement demo (not a complete tournament rules engine).
+    // Human vs computer chess movement demo. This is a casual movement engine, not full tournament chess rules.
     const chessBoard = document.getElementById('chess-board');
     if (chessBoard) {
         const glyphs = {
@@ -203,83 +203,128 @@ document.addEventListener('DOMContentLoaded', () => {
         const initial = () => [
             ['br','bn','bb','bq','bk','bb','bn','br'],
             Array(8).fill('bp'),
-            Array(8).fill(null), Array(8).fill(null), Array(8).fill(null), Array(8).fill(null),
+            Array(8).fill(null),Array(8).fill(null),Array(8).fill(null),Array(8).fill(null),
             Array(8).fill('wp'),
             ['wr','wn','wb','wq','wk','wb','wn','wr']
         ];
-        let board = initial(), turn = 'w', selected = null, legal = [], finished = false;
-        const status = document.getElementById('chess-status');
-        const turnChip = document.getElementById('chess-turn');
-        const inside = (r,c) => r>=0 && r<8 && c>=0 && c<8;
-        const side = piece => piece ? piece[0] : null;
+        let board=initial(),turn='w',selected=null,legal=[],finished=false,botThinking=false,gameId=0;
+        const status=document.getElementById('chess-status');
+        const turnChip=document.getElementById('chess-turn');
+        const pieceName={k:'king',q:'queen',r:'rook',b:'bishop',n:'knight',p:'pawn'};
+        const value={p:10,n:32,b:34,r:50,q:90,k:900};
+        const inside=(r,c)=>r>=0&&r<8&&c>=0&&c<8;
+        const side=p=>p?p[0]:null;
         function movesFor(r,c) {
-            const piece=board[r][c]; if(!piece) return [];
-            const color=piece[0], kind=piece[1], moves=[];
-            const add=(rr,cc)=>{ if(!inside(rr,cc)) return false; const target=board[rr][cc]; if(target && side(target)===color) return false; moves.push([rr,cc]); return !target; };
-            if(kind==='p') {
-                const dir=color==='w'?-1:1, home=color==='w'?6:1;
-                if(inside(r+dir,c) && !board[r+dir][c]) {
-                    add(r+dir,c);
-                    if(r===home && !board[r+2*dir][c]) add(r+2*dir,c);
-                }
-                for(const dc of [-1,1]) if(inside(r+dir,c+dc) && board[r+dir][c+dc] && side(board[r+dir][c+dc])!==color) moves.push([r+dir,c+dc]);
-            } else if(kind==='n') {
-                for(const [dr,dc] of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]) add(r+dr,c+dc);
-            } else if(kind==='k') {
-                for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++) if(dr||dc) add(r+dr,c+dc);
-            } else {
+            const piece=board[r][c]; if(!piece)return [];
+            const color=piece[0],kind=piece[1],moves=[];
+            const add=(rr,cc)=>{if(!inside(rr,cc))return false;const target=board[rr][cc];if(target&&side(target)===color)return false;moves.push([rr,cc]);return !target;};
+            if(kind==='p'){
+                const dir=color==='w'?-1:1,home=color==='w'?6:1;
+                if(inside(r+dir,c)&&!board[r+dir][c]){add(r+dir,c);if(r===home&&!board[r+2*dir][c])add(r+2*dir,c);}
+                for(const dc of [-1,1])if(inside(r+dir,c+dc)&&board[r+dir][c+dc]&&side(board[r+dir][c+dc])!==color)moves.push([r+dir,c+dc]);
+            }else if(kind==='n'){
+                for(const [dr,dc] of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]])add(r+dr,c+dc);
+            }else if(kind==='k'){
+                for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++)if(dr||dc)add(r+dr,c+dc);
+            }else{
                 const dirs=[];
-                if(kind==='b'||kind==='q') dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);
-                if(kind==='r'||kind==='q') dirs.push([-1,0],[1,0],[0,-1],[0,1]);
-                dirs.forEach(([dr,dc])=>{ let rr=r+dr,cc=c+dc; while(inside(rr,cc)){ const empty=add(rr,cc); if(!empty) break; rr+=dr; cc+=dc; }});
+                if(kind==='b'||kind==='q')dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);
+                if(kind==='r'||kind==='q')dirs.push([-1,0],[1,0],[0,-1],[0,1]);
+                dirs.forEach(([dr,dc])=>{let rr=r+dr,cc=c+dc;while(inside(rr,cc)){const empty=add(rr,cc);if(!empty)break;rr+=dr;cc+=dc;}});
             }
             return moves;
         }
-        function renderBoard() {
+        function allMoves(color){
+            const list=[];
+            for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(board[r][c]&&board[r][c][0]===color)
+                movesFor(r,c).forEach(([rr,cc])=>list.push({from:[r,c],to:[rr,cc],capture:board[rr][cc]}));
+            return list;
+        }
+        function renderBoard(){
             chessBoard.innerHTML='';
-            for(let r=0;r<8;r++) for(let c=0;c<8;c++) {
-                const piece=board[r][c], square=document.createElement('button');
-                square.type='button'; square.className='chess-square '+((r+c)%2?'dark':'light');
+            for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+                const piece=board[r][c],square=document.createElement('button');
+                square.type='button';square.className='chess-square '+((r+c)%2?'dark':'light');
                 square.setAttribute('role','gridcell');
-                square.setAttribute('aria-label',`${'abcdefgh'[c]}${8-r}${piece ? ' '+(piece[0]==='w'?'white':'black')+' '+({k:'king',q:'queen',r:'rook',b:'bishop',n:'knight',p:'pawn'}[piece[1]]) : ' empty'}`);
-                if(selected && selected[0]===r && selected[1]===c) square.classList.add('selected');
+                square.setAttribute('aria-label',`${'abcdefgh'[c]}${8-r}${piece?' '+(piece[0]==='w'?'white ':'black ')+pieceName[piece[1]]:' empty'}`);
+                if(selected&&selected[0]===r&&selected[1]===c)square.classList.add('selected');
                 const isMove=legal.some(([mr,mc])=>mr===r&&mc===c);
-                if(isMove) square.classList.add(piece?'capture-target':'move-target');
-                if(piece) { const span=document.createElement('span'); span.className='piece '+(piece[0]==='w'?'white-piece':'black-piece'); span.textContent=glyphs[piece[0]==='w'?'white':'black'][piece[1]]; square.appendChild(span); }
-                if(isMove && !piece) { const dot=document.createElement('i'); dot.className='move-dot'; square.appendChild(dot); }
-                square.addEventListener('click',()=>clickSquare(r,c));
+                if(isMove)square.classList.add(piece?'capture-target':'move-target');
+                if(piece){const span=document.createElement('span');span.className='piece '+(piece[0]==='w'?'white-piece':'black-piece');span.textContent=glyphs[piece[0]==='w'?'white':'black'][piece[1]];square.appendChild(span);}
+                if(isMove&&!piece){const dot=document.createElement('i');dot.className='move-dot';square.appendChild(dot);}
+                square.disabled=botThinking||finished;
+                square.addEventListener('click',()=>humanClick(r,c));
                 chessBoard.appendChild(square);
             }
-            if(turnChip) turnChip.textContent=finished?'GAME OVER':(turn==='w'?'WHITE TO MOVE':'BLACK TO MOVE');
+            if(turnChip)turnChip.textContent=finished?'GAME OVER':botThinking?'BOT THINKING…':turn==='w'?'YOUR TURN · WHITE':'BOT TURN · BLACK';
+            chessBoard.setAttribute('aria-busy',String(botThinking));
         }
-        function clickSquare(r,c) {
-            if(finished) return;
+        function finishMove(from,to){
+            const moving=board[from[0]][from[1]],captured=board[to[0]][to[1]];
+            board[to[0]][to[1]]=moving;board[from[0]][from[1]]=null;
+            if(moving[1]==='p'&&(to[0]===0||to[0]===7))board[to[0]][to[1]]=moving[0]+'q';
+            selected=null;legal=[];
+            if(captured&&captured[1]==='k'){finished=true;if(status)status.textContent=(moving[0]==='w'?'You win!':'Bot wins!')+' King captured in this casual demo.';return true;}
+            turn=turn==='w'?'b':'w';return false;
+        }
+        function chooseBotMove(){
+            const moves=allMoves('b');
+            if(!moves.length)return null;
+            // Prefer safe captures, then central development and varied play.
+            const scored=moves.map(m=>{
+                const [r,c]=m.to,kind=board[m.from[0]][m.from[1]][1];
+                const center=3.5-(Math.abs(3.5-r)+Math.abs(3.5-c))/2;
+                const capture=m.capture?value[m.capture[1]]*1.6:0;
+                const development=(m.from[0]===1?1.8:0)+(kind==='n'||kind==='b'?center*1.5:0);
+                const advance=kind==='p'?(r-m.from[0])*1.4:0;
+                return {...m,score:capture+development+advance+Math.random()*2.5};
+            });
+            scored.sort((a,b)=>b.score-a.score);
+            return scored[0];
+        }
+        function botMove(){
+            if(finished||turn!=='b')return;
+            botThinking=true;selected=null;legal=[];
+            if(status)status.textContent='Bot is thinking…';
+            renderBoard();
+            const thisGame=gameId;
+            window.setTimeout(()=>{
+                if(thisGame!==gameId||finished||turn!=='b')return;
+                const move=chooseBotMove();
+                botThinking=false;
+                if(!move){finished=true;if(status)status.textContent='No available moves. Demo finished.';renderBoard();return;}
+                const captured=board[move.to[0]][move.to[1]];
+                const ended=finishMove(move.from,move.to);
+                if(status&&!ended)status.textContent=captured?'Bot captured your '+pieceName[captured[1]]+'. Your turn.':'Bot played. Your turn, White.';
+                renderBoard();
+            },650+Math.random()*450);
+        }
+        function humanClick(r,c){
+            if(finished||botThinking||turn!=='w')return;
             const piece=board[r][c];
-            if(selected && legal.some(([rr,cc])=>rr===r&&cc===c)) {
-                const [fromR,fromC]=selected, moving=board[fromR][fromC], captured=board[r][c];
-                board[r][c]=moving; board[fromR][fromC]=null;
-                if(moving[1]==='p' && (r===0||r===7)) board[r][c]=moving[0]+'q';
-                selected=null; legal=[];
-                if(captured && captured[1]==='k') {
-                    finished=true; if(status) status.textContent=(turn==='w'?'White':'Black')+' wins the demo by capturing the king.';
-                } else {
-                    turn=turn==='w'?'b':'w';
-                    if(status) status.textContent=(turn==='w'?'White':'Black')+' to move. Select a piece.';
-                }
-                renderBoard(); return;
+            if(selected&&legal.some(([rr,cc])=>rr===r&&cc===c)){
+                const captured=board[r][c],ended=finishMove(selected,[r,c]);
+                if(ended){renderBoard();return;}
+                if(status)status.textContent=captured?'You captured the bot’s '+pieceName[captured[1]]+'. Bot turn…':'Move played. Bot turn…';
+                renderBoard();botMove();return;
             }
-            if(piece && piece[0]===turn) {
-                selected=[r,c]; legal=movesFor(r,c);
-                if(status) status.textContent=`${turn==='w'?'White':'Black'} ${({k:'king',q:'queen',r:'rook',b:'bishop',n:'knight',p:'pawn'}[piece[1]])} selected · choose a highlighted square.`;
-            } else {
-                selected=null; legal=[];
-                if(status) status.textContent='Choose one of your own pieces first.';
+            if(piece&&piece[0]==='w'){
+                selected=[r,c];legal=movesFor(r,c);
+                if(status)status.textContent='Your '+pieceName[piece[1]]+' selected. Choose a highlighted square.';
+            }else{
+                selected=null;legal=[];
+                if(status)status.textContent='Select one of your white pieces.';
             }
             renderBoard();
         }
         renderBoard();
         const reset=document.getElementById('chess-reset');
-        if(reset) reset.addEventListener('click',()=>{ board=initial(); turn='w'; selected=null; legal=[]; finished=false; if(status) status.textContent='White to move. Select a piece to begin.'; renderBoard(); });
+        if(reset)reset.addEventListener('click',()=>{
+            gameId++;board=initial();turn='w';selected=null;legal=[];finished=false;botThinking=false;
+            if(status)status.textContent='You are White. Make your first move against the bot.';
+            renderBoard();
+        });
+        if(status)status.textContent='You are White. Make your first move against the bot.';
     }
 
     createParticles();
