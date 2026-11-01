@@ -42,6 +42,7 @@
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#explore">Explore</a></li>
+                <li><a href="#chess-lab">Chess Lab</a></li>
                 <li><a href="#quotes">Quotes</a></li>
                 <li><a href="#connect">Connect</a></li>
             </ul>
@@ -177,7 +178,31 @@
         </div>
     </section>
 
-    <!-- Quotes Section -->
+
+    <!-- Interactive Chess Lab -->
+    <section class="chess-lab" id="chess-lab">
+        <div class="container chess-layout">
+            <div class="chess-copy">
+                <span class="section-tag">PLAY A MOVE</span>
+                <h2 class="section-title">The Strategy Lab<span class="logo-period">.</span></h2>
+                <p>Take a seat at the board. Try a few moves and explore the strategy behind every square.</p>
+                <div class="chess-feature-list">
+                    <div><span class="feature-check">01</span><span><b>Interactive board</b><small>Select a piece, then choose its destination.</small></span></div>
+                    <div><span class="feature-check">02</span><span><b>Turn-based play</b><small>Play both sides and capture pieces.</small></span></div>
+                    <div><span class="feature-check">03</span><span><b>Built for the curious</b><small>A lightweight chess movement demo, right here.</small></span></div>
+                </div>
+                <a class="chess-outlink" href="https://anichess.com" target="_blank" rel="noopener noreferrer">Explore Anichess <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="chess-console">
+                <div class="console-top"><span><i></i> TVLSUN / CHESS LAB</span><span class="console-live">LIVE BOARD</span></div>
+                <div class="board-heading"><div><span class="board-kicker">CLASSIC MODE</span><h3>Make your move</h3></div><div class="turn-chip" id="chess-turn">WHITE TO MOVE</div></div>
+                <div class="chess-board-wrap"><div class="chess-coordinates coords-rank"><span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span></div><div class="chess-board" id="chess-board" role="grid" aria-label="Interactive chess board"></div><div class="chess-coordinates coords-file"><span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span></div></div>
+                <div class="chess-status" id="chess-status" aria-live="polite">White to move. Select a piece to begin.</div>
+                <div class="chess-controls"><button class="chess-reset" id="chess-reset" type="button">↺ Reset board</button><span class="chess-note">Movement demo · not full tournament rules</span></div>
+            </div>
+        </div>
+    </section>
+\n    <!-- Quotes Section -->
     <section id="quotes" class="quotes">
         <div class="container">
             <div class="section-header">
