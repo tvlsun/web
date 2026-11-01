@@ -34,12 +34,18 @@
     <nav class="navbar" aria-label="Main navigation">
         <div class="nav-container">
             <a class="logo" href="#home" aria-label="TVLSUN home">
-                <svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="TV monogram">
-                    <defs><linearGradient id="brandGradient" x1="4" y1="4" x2="44" y2="44"><stop stop-color="#a9b5ff"/><stop offset=".55" stop-color="#b99cff"/><stop offset="1" stop-color="#73e2d8"/></linearGradient></defs>
-                    <rect x="2" y="2" width="44" height="44" rx="14" fill="url(#brandGradient)" fill-opacity=".13" stroke="url(#brandGradient)" stroke-opacity=".7"/>
-                    <path d="M10 15h18M19 15v19M28 15l6 19 6-19" fill="none" stroke="url(#brandGradient)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg class="brand-mark sun-mark" viewBox="0 0 64 64" role="img" aria-label="TVLSUN solar compass emblem">
+                    <defs>
+                        <linearGradient id="sunMetal" x1="7" y1="6" x2="57" y2="59"><stop stop-color="#f4e5b2"/><stop offset=".38" stop-color="#b8a4ff"/><stop offset=".72" stop-color="#8c9dff"/><stop offset="1" stop-color="#73e2d8"/></linearGradient>
+                        <radialGradient id="sunCore"><stop stop-color="#202b50"/><stop offset="1" stop-color="#0a1020"/></radialGradient>
+                    </defs>
+                    <circle cx="32" cy="32" r="28" fill="none" stroke="url(#sunMetal)" stroke-width="1.4" opacity=".55"/>
+                    <path d="M32 2.5v7M32 54.5v7M2.5 32h7M54.5 32h7M11.15 11.15l5 5M47.85 47.85l5 5M52.85 11.15l-5 5M16.15 47.85l-5 5" stroke="url(#sunMetal)" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="32" cy="32" r="21" fill="url(#sunCore)" stroke="url(#sunMetal)" stroke-width="1.7"/>
+                    <path d="M42.5 21H27.8c-4 0-6.3 2.1-6.3 5.2 0 3.3 2.5 4.8 6.2 5.7l8.4 2.1c3.4.9 5.3 2.1 5.3 4.8 0 3.3-2.6 5.2-6.6 5.2H21.5" fill="none" stroke="url(#sunMetal)" stroke-width="3.5" stroke-linecap="round"/>
+                    <path d="M42.5 21l-4.2-4.2M21.5 44l4.2 4.2" stroke="url(#sunMetal)" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                <span class="logo-word">TVLSUN<span class="logo-period">.</span><small>WEB3 EXPLORER</small></span>
+                <span class="logo-word">TVLSUN<span class="logo-period">.</span><small>WEB3 · GAMEFI · STRATEGY</small></span>
             </a>
             <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-navigation"><span></span><span></span><span></span></button>
             <ul class="nav-links" id="primary-navigation">
