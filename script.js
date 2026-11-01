@@ -202,9 +202,9 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         const initial = () => [
             ['br','bn','bb','bq','bk','bb','bn','br'],
-            ...[0,1,2,3,4,5,6,7].map(() => Array(8).fill('bp')),
-            ...[0,1,2,3,4,5,6,7].map(() => Array(8).fill(null)),
-            ...[0,1,2,3,4,5,6,7].map(() => Array(8).fill('wp')),
+            Array(8).fill('bp'),
+            Array(8).fill(null), Array(8).fill(null), Array(8).fill(null), Array(8).fill(null),
+            Array(8).fill('wp'),
             ['wr','wn','wb','wq','wk','wb','wn','wr']
         ];
         let board = initial(), turn = 'w', selected = null, legal = [], finished = false;
