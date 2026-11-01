@@ -4,9 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Web3 Gamer Portfolio - Showcasing blockchain gaming achievements and experiences">
-    <meta name="keywords" content="Web3, Gaming, Blockchain, NFT, Crypto, Gamer">
-    <title>Web3 Gamer Portfolio</title>
+    <meta name="description" content="TVLSUN — exploring Web3 gaming, chess strategy, GameFi and the on-chain world.">
+    <meta name="keywords" content="TVLSUN, Web3, Gaming, Blockchain, NFT, Crypto, GameFi, Chess">
+    <meta name="theme-color" content="#080b14">
+    <meta property="og:title" content="TVLSUN — Web3 Gamer & Explorer">
+    <meta property="og:description" content="Strategy meets the on-chain world. Explore Web3 gaming, chess and GameFi with TVLSUN.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tvlsun.in/">
+    <title>TVLSUN — Web3 Gamer & Explorer</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,15 +29,17 @@
     <div id="particles-container"></div>
 
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" aria-label="Main navigation">
         <div class="nav-container">
             <div class="logo">
                 <span class="logo-text">WEB3</span>
                 <span class="logo-accent">GAMER</span>
             </div>
-            <ul class="nav-links">
+            <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-navigation"><span></span><span></span><span></span></button>
+            <ul class="nav-links" id="primary-navigation">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
+                <li><a href="#explore">Explore</a></li>
                 <li><a href="#quotes">Quotes</a></li>
                 <li><a href="#connect">Connect</a></li>
             </ul>
@@ -42,17 +49,17 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-content">
-            <div class="hero-tag">WEB3 GAMING PIONEER</div>
+            <div class="hero-tag"><span class="status-dot"></span> WEB3 GAMING · CHESS · GAMEFI</div>
             <h1 class="hero-title">
-                <span class="gradient-text">Level Up</span> in the<br>
+                <span class="gradient-text">Strategy</span> meets the<br>
                 <span class="typing-text">Metaverse</span>
             </h1>
             <p class="hero-description">
-                Master chess, earn crypto | Play anichess.com and turn your skills into rewards
+                Exploring the intersection of chess, gaming and blockchain. Curious minds, strategic moves and an open on-chain future.
             </p>
             <div class="hero-cta">
-                <a href="https://anichess.com" target="_blank" class="btn btn-primary">Play Anichess Now 🎮</a>
-                <a href="#connect" class="btn btn-secondary">Connect With Me</a>
+                <a href="https://anichess.com" target="_blank" class="btn btn-primary">Explore Anichess ↗</a>
+                <a href="#connect" class="btn btn-secondary">Let’s Connect</a>
             </div>
         </div>
         <div class="hero-visual">
@@ -123,6 +130,38 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Focus Areas -->
+    <section class="focus" id="explore">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">WHAT I EXPLORE</span>
+                <h2 class="section-title">The On-chain Playground</h2>
+                <p class="section-subtitle">A few worlds I enjoy exploring at the edge of gaming and technology.</p>
+            </div>
+            <div class="focus-grid">
+                <article class="focus-card">
+                    <div class="focus-icon">♟</div>
+                    <span class="focus-index">01 / STRATEGY</span>
+                    <h3>Chess & Strategy</h3>
+                    <p>Mind games, calculated moves and the joy of learning something new with every match.</p>
+                </article>
+                <article class="focus-card">
+                    <div class="focus-icon">◈</div>
+                    <span class="focus-index">02 / OWNERSHIP</span>
+                    <h3>GameFi & NFTs</h3>
+                    <p>Exploring player-owned economies, digital collectibles and new ways to participate.</p>
+                </article>
+                <article class="focus-card">
+                    <div class="focus-icon">⌘</div>
+                    <span class="focus-index">03 / COMMUNITY</span>
+                    <h3>Web3 Communities</h3>
+                    <p>Following builders, sharing ideas and discovering what decentralized communities can create.</p>
+                </article>
             </div>
         </div>
     </section>
@@ -240,7 +279,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Web3 Gamer Portfolio. Built on the blockchain. 🚀</p>
+            <p>&copy; 2026 <strong>TVLSUN</strong>. Built with curiosity for the on-chain future. 🚀</p>
         </div>
     </footer>
 
