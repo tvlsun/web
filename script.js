@@ -192,6 +192,96 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
+    // Lightweight interactive chess movement demo (not a complete tournament rules engine).
+    const chessBoard = document.getElementById('chess-board');
+    if (chessBoard) {
+        const glyphs = {
+            white: { k:'♔', q:'♕', r:'♖', b:'♗', n:'♘', p:'♙' },
+            black: { k:'♚', q:'♛', r:'♜', b:'♝', n:'♞', p:'♟' }
+        };
+        const initial = () => [
+            ['br','bn','bb','bq','bk','bb','bn','br'],
+            ...[0,1,2,3,4,5,6,7].map(() => Array(8).fill('bp')),
+            ...[0,1,2,3,4,5,6,7].map(() => Array(8).fill(null)),
+            ...[0,1,2,3,4,5,6,7].map(() => Array(8).fill('wp')),
+            ['wr','wn','wb','wq','wk','wb','wn','wr']
+        ];
+        let board = initial(), turn = 'w', selected = null, legal = [], finished = false;
+        const status = document.getElementById('chess-status');
+        const turnChip = document.getElementById('chess-turn');
+        const inside = (r,c) => r>=0 && r<8 && c>=0 && c<8;
+        const side = piece => piece ? piece[0] : null;
+        function movesFor(r,c) {
+            const piece=board[r][c]; if(!piece) return [];
+            const color=piece[0], kind=piece[1], moves=[];
+            const add=(rr,cc)=>{ if(!inside(rr,cc)) return false; const target=board[rr][cc]; if(target && side(target)===color) return false; moves.push([rr,cc]); return !target; };
+            if(kind==='p') {
+                const dir=color==='w'?-1:1, home=color==='w'?6:1;
+                if(inside(r+dir,c) && !board[r+dir][c]) {
+                    add(r+dir,c);
+                    if(r===home && !board[r+2*dir][c]) add(r+2*dir,c);
+                }
+                for(const dc of [-1,1]) if(inside(r+dir,c+dc) && board[r+dir][c+dc] && side(board[r+dir][c+dc])!==color) moves.push([r+dir,c+dc]);
+            } else if(kind==='n') {
+                for(const [dr,dc] of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]) add(r+dr,c+dc);
+            } else if(kind==='k') {
+                for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++) if(dr||dc) add(r+dr,c+dc);
+            } else {
+                const dirs=[];
+                if(kind==='b'||kind==='q') dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);
+                if(kind==='r'||kind==='q') dirs.push([-1,0],[1,0],[0,-1],[0,1]);
+                dirs.forEach(([dr,dc])=>{ let rr=r+dr,cc=c+dc; while(inside(rr,cc)){ const empty=add(rr,cc); if(!empty) break; rr+=dr; cc+=dc; }});
+            }
+            return moves;
+        }
+        function renderBoard() {
+            chessBoard.innerHTML='';
+            for(let r=0;r<8;r++) for(let c=0;c<8;c++) {
+                const piece=board[r][c], square=document.createElement('button');
+                square.type='button'; square.className='chess-square '+((r+c)%2?'dark':'light');
+                square.setAttribute('role','gridcell');
+                square.setAttribute('aria-label',`${'abcdefgh'[c]}${8-r}${piece ? ' '+(piece[0]==='w'?'white':'black')+' '+({k:'king',q:'queen',r:'rook',b:'bishop',n:'knight',p:'pawn'}[piece[1]]) : ' empty'}`);
+                if(selected && selected[0]===r && selected[1]===c) square.classList.add('selected');
+                const isMove=legal.some(([mr,mc])=>mr===r&&mc===c);
+                if(isMove) square.classList.add(piece?'capture-target':'move-target');
+                if(piece) { const span=document.createElement('span'); span.className='piece '+(piece[0]==='w'?'white-piece':'black-piece'); span.textContent=glyphs[piece[0]==='w'?'white':'black'][piece[1]]; square.appendChild(span); }
+                if(isMove && !piece) { const dot=document.createElement('i'); dot.className='move-dot'; square.appendChild(dot); }
+                square.addEventListener('click',()=>clickSquare(r,c));
+                chessBoard.appendChild(square);
+            }
+            if(turnChip) turnChip.textContent=finished?'GAME OVER':(turn==='w'?'WHITE TO MOVE':'BLACK TO MOVE');
+        }
+        function clickSquare(r,c) {
+            if(finished) return;
+            const piece=board[r][c];
+            if(selected && legal.some(([rr,cc])=>rr===r&&cc===c)) {
+                const [fromR,fromC]=selected, moving=board[fromR][fromC], captured=board[r][c];
+                board[r][c]=moving; board[fromR][fromC]=null;
+                if(moving[1]==='p' && (r===0||r===7)) board[r][c]=moving[0]+'q';
+                selected=null; legal=[];
+                if(captured && captured[1]==='k') {
+                    finished=true; if(status) status.textContent=(turn==='w'?'White':'Black')+' wins the demo by capturing the king.';
+                } else {
+                    turn=turn==='w'?'b':'w';
+                    if(status) status.textContent=(turn==='w'?'White':'Black')+' to move. Select a piece.';
+                }
+                renderBoard(); return;
+            }
+            if(piece && piece[0]===turn) {
+                selected=[r,c]; legal=movesFor(r,c);
+                if(status) status.textContent=`${turn==='w'?'White':'Black'} ${({k:'king',q:'queen',r:'rook',b:'bishop',n:'knight',p:'pawn'}[piece[1]])} selected · choose a highlighted square.`;
+            } else {
+                selected=null; legal=[];
+                if(status) status.textContent='Choose one of your own pieces first.';
+            }
+            renderBoard();
+        }
+        renderBoard();
+        const reset=document.getElementById('chess-reset');
+        if(reset) reset.addEventListener('click',()=>{ board=initial(); turn='w'; selected=null; legal=[]; finished=false; if(status) status.textContent='White to move. Select a piece to begin.'; renderBoard(); });
+    }
+
     createParticles();
     console.log('%cTVLSUN — built with curiosity for the on-chain future.', 'color:#9aaaff;font-size:14px;font-weight:600');
 });
